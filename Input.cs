@@ -1,62 +1,36 @@
- using UnityEngine;
- using UnityEngine.Assertions;
+using UnityEngine;
+using UnityEngine.Assertions;
  
- 
- namespace InputWrapper {
-     public static class Input {
-         static bool touchSupported => UnityEngine.Input.touchSupported;
+//  namespace InputWrapper {
+     public class Input : UnityEngine.Input{
          static Touch? fakeTouch => SimulateTouchWithMouse.Instance.FakeTouch;
  
-         public static bool GetButton(string buttonName) {
-             return UnityEngine.Input.GetButton(buttonName);
-         }
- 
-         public static bool GetButtonDown(string buttonName) {
-             return UnityEngine.Input.GetButtonDown(buttonName);
-         }
- 
-         public static bool GetButtonUp(string buttonName) {
-             return UnityEngine.Input.GetButtonUp(buttonName);
-         }
- 
-         public static bool GetMouseButton(int button) {
-             return UnityEngine.Input.GetMouseButton(button);
-         }
- 
-         public static bool GetMouseButtonDown(int button) {
-             return UnityEngine.Input.GetMouseButtonDown(button);
-         }
- 
-         public static bool GetMouseButtonUp(int button) {
-             return UnityEngine.Input.GetMouseButtonUp(button);
-         }
- 
-         public static int touchCount {
+         public static new int touchCount {
              get {
-                 if (touchSupported) {
+#if !UNITY_EDITOR
                      return UnityEngine.Input.touchCount;
-                 } else {
+#else
                      return fakeTouch.HasValue ? 1 : 0;
-                 }
+#endif
              }
          }
  
-         public static Touch GetTouch(int index) {
-             if (touchSupported) {
+         public static new Touch GetTouch(int index) {
+#if !UNITY_EDITOR
                  return UnityEngine.Input.GetTouch(index);
-             } else {
+#else
                  Assert.IsTrue(fakeTouch.HasValue && index == 0);
                  return fakeTouch.Value;
-             }
+#endif
          }
  
-         public static Touch[] touches {
+         public static new Touch[] touches {
              get {
-                 if (touchSupported) {
+#if !UNITY_EDITOR
                      return UnityEngine.Input.touches;
-                 } else {
+#else
                      return fakeTouch.HasValue ? new[] {fakeTouch.Value} : new Touch[0];
-                 }
+#endif
              }
          }
      }
@@ -127,4 +101,4 @@
              };
          }
      }
- }
+//  }
